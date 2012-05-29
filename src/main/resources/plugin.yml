@@ -1,0 +1,9 @@
+name: Paladin
+main: com.d3lta.paladin.Paladin
+version: 0.0.1
+author: Delta
+website: http://www.seededblocks.com
+
+commands:
+    paladin:
+        aliases: [p, pal]
