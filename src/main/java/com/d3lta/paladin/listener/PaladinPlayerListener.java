@@ -10,16 +10,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import com.d3lta.paladin.Paladin;
-import com.d3lta.paladin.area.PaladinAreaManager;
 
 public class PaladinPlayerListener implements Listener {
 
 	private Paladin paladin;
-	private PaladinAreaManager areaManager;
 	
-	public PaladinPlayerListener(Paladin paladin) {
-		this.paladin = paladin;
-		this.areaManager = paladin.getPaladinAreaManager();
+	public PaladinPlayerListener(Paladin plugin) {
+		this.paladin = plugin;
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH)
@@ -33,7 +30,7 @@ public class PaladinPlayerListener implements Listener {
 		Player player = event.getPlayer();
 		Chunk chunk = block.getLocation().getChunk();
 		
-		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && (!areaManager.canBuild(player, chunk))) {
+		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && (!paladin.getPaladinAreaManager().canBuild(player, chunk))) {
 			player.sendMessage("You are not able to destroy here!");
 			event.setCancelled(true);
 			return;
