@@ -1,6 +1,7 @@
 package com.d3lta.paladin.listener;
 
-import org.bukkit.Chunk;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,18 +23,53 @@ public class PaladinPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerInteract(final PlayerInteractEvent event) {
 		
-		//Lets make sure the dude is actually doing something...
-		if (!(event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))
+		if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR) {
 			return;
+		}
 		
-		Block block = event.getClickedBlock();
 		Player player = event.getPlayer();
-		Chunk chunk = block.getLocation().getChunk();
+		Block block = event.getClickedBlock();
+		Material blockType = event.getMaterial();
+		Material blockHeld = player.getItemInHand().getType();
+
+		if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+			if (blockType == Material.NOTE_BLOCK
+					|| blockType == Material.JUKEBOX
+					|| blockType == Material.DRAGON_EGG) {
+				if (!paladin.getPaladinAreaManager().canBuild(player, block.getChunk())) {
+					player.sendMessage(ChatColor.DARK_RED + "You can not do that here");
+					event.setCancelled(true);
+					return;
+				}
+			}
+		}
 		
-		if (event.getAction().equals(Action.LEFT_CLICK_BLOCK) && (!paladin.getPaladinAreaManager().canBuild(player, chunk))) {
-			player.sendMessage("You are not able to destroy here!");
-			event.setCancelled(true);
-			return;
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			if (blockType == Material.DISPENSER
+					|| blockType == Material.NOTE_BLOCK
+					|| blockType == Material.BED_BLOCK
+					|| blockType == Material.CHEST
+					|| blockType == Material.FURNACE
+					|| blockType == Material.BURNING_FURNACE
+					|| blockType == Material.JUKEBOX
+					|| blockType == Material.DIODE_BLOCK_ON
+					|| blockType == Material.DIODE_BLOCK_OFF
+					|| blockType == Material.LOCKED_CHEST
+					|| blockType == Material.BREWING_STAND
+					|| blockType == Material.CAULDRON) {
+				if (!paladin.getPaladinAreaManager().canBuild(player, block.getChunk())) {
+					player.sendMessage(ChatColor.DARK_RED + "You can not do that here");
+					event.setCancelled(true);
+					return;
+				}
+			}
+			if (blockHeld == Material.WATER_BUCKET || blockHeld == Material.LAVA_BUCKET) {
+				if (!paladin.getPaladinAreaManager().canBuild(player, block.getChunk())) {
+					player.sendMessage(ChatColor.DARK_RED + "You can not do that here");
+					event.setCancelled(true);
+					return;
+				}
+			}
 		}
 	}
 }
